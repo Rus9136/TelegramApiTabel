@@ -29,11 +29,17 @@ def getTabel():
 
 def send_telegram(text: str, chatid):
     token = "hOnIRtv-QpC84Ri0aZVRbukoxI3Z7iDr"
-    bot = telebot.TeleBot(token)
-    bot.send_message(chatid,
-                     "Jnkbxt")
+
+    bot_message = text
+
+    bot_token = token
+    bot_chatID = chatid
+    send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
+
+    response = requests.get(send_text)
+    print(response.status_code)
 
 
 
 
-send_telegram("asdxxxxx", "555299761")
+send_telegram("ПРивет это бот из Python", "555299761")
