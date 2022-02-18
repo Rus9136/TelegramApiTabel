@@ -34,10 +34,15 @@ def send_telegram(text: str, chatid):
 
     bot_token = token
     bot_chatID = chatid
-    send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
+    bot = telebot.TeleBot(token)
 
-    response = requests.get(send_text)
-    print(response.status_code)
+
+    bot.send_message(chat_id=chatid, text=text,  parse_mode='html')
+
+    #send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
+
+    #response = requests.get(send_text)
+    print(bot.status_code)
 
 
 
