@@ -1,12 +1,10 @@
 import requests
 import json
-import config
 import csv
 import telebot
-from telebot import types
+
 
 def getSchedule():
-
 
     try:
         response = requests.get(
@@ -25,7 +23,7 @@ def getSchedule():
             print(values)
             # send_message(values, '555299761')
     except:
-        print('aasdf')
+        print('Ошибка основного запроса')
 
 
 
