@@ -5,9 +5,10 @@ import telebot
 import pandas as pd
 
 
+
 def getSchedule():
 
-    try:
+    #try:
         response = requests.get(
             'https://kdp.aqnietgroup.com/v1/workplaces/205',
             params={'date_from': '2021-07-01', 'date_to': '2021-07-02'},
@@ -37,19 +38,23 @@ def getSchedule():
             #print(values)
 
 
-        alaries1 = pd.DataFrame({'Name': Name_list,
+        df = pd.DataFrame({'Name': Name_list,
                                  'working_day': working_day_list,
                                  'date_from': date_from_list,
                                  'date_to': date_to_list,
-                                 'day_off': day_off,
+                                 'day_off': day_off
                                  })
-        print(alaries1)
+
+
+
+        df.to_excel('C:\PythonProgects\TelegramApiTabel/teams.xlsx')
+
 
 
 
          # send_message(values, '555299761')
-    except:
-        print('Ошибка основного запроса')
+    #except:
+    #    print('Ошибка основного запроса')
 
 
 
