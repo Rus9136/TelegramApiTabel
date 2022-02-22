@@ -1,10 +1,11 @@
 import requests
 import json
+import config
 import csv
 import telebot
 from telebot import types
 
-def getTabel():
+def getSchedule():
     headers = {'Authorization': 'Bearer hOnIRtv-QpC84Ri0aZVRbukoxI3Z7iDr'}
     payload = {'date_from': '2021-07-01', 'date_to': '2021-07-01'}
 
@@ -13,7 +14,6 @@ def getTabel():
         params={'date_from': '2021-07-01', 'date_to': '2021-07-01'},
         headers={'Authorization': 'Bearer hOnIRtv-QpC84Ri0aZVRbukoxI3Z7iDr'},
     )
-    print(response.status_code)
 
     data = response.text
 
@@ -22,29 +22,47 @@ def getTabel():
     # dict_keys(['id', 'pharmacy', 'personal_number', 'working_day', 'date_from', 'date_to', 'day_off'])
     for i in todos['items']:
         # print(i.keys())
-        print(i.values())
+        values = i.values()
+        print(values)
+        send_message(values, '555299761')
         # print(i)
 
     # print(type(todos)) # <class 'list'>
 
-def send_telegram(text: str, chatid):
-    token = "hOnIRtv-QpC84Ri0aZVRbukoxI3Z7iDr"
+def send_message(text: str, chatid):
 
-    bot_message = text
-
-    bot_token = token
-    bot_chatID = chatid
+    token = "908710316:AAFuUs_51f3ykh9gSrAUhq2w-xZpjm68-6A"
     bot = telebot.TeleBot(token)
+    bot.send_message(chatid, text)
 
 
-    bot.send_message(chat_id=chatid, text=text,  parse_mode='html')
-
-    #send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
-
-    #response = requests.get(send_text)
-    print(bot.status_code)
-
+    ##Отправить документ в телеграм
+    #path = "tasks.xls"
+    #with open("tasks.xls", "rb") as file:
+    #    f = file.read()
+    #bot.send_document(chatid, f, "tasks.xls")
 
 
+    # @bot.message_handler(content_types=["text"])
+    # def repeat_all_messages(message):  # Название функции не играет никакой роли
+    #     bot.send_message(message.chat.id, message.text)
+    #
+    # bot.polling()
 
-send_telegram("ПРивет это бот из Python", "555299761")
+def GetEmployeeName(table_number):
+    param = {
+        "table_number": table_number,
+        "pin": "0000"
+    }
+    headers = {'Authorization': 'Bearer e0xx6ZvwbBacg-PFZnczijW4nCx6i5-r'}
+    response = requests.post('http://api.kazanat.com/v1/finger/employees-find', json=param, headers=headers)
+
+    data = response.json()
+
+    print(data['data'])
+
+
+#getSchedule()
+GetEmployeeName('EUA-515065')
+
+#send_message("Тест из другого модуля", "555299761")
