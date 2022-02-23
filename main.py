@@ -1,9 +1,8 @@
 import requests
-import json
-import csv
 import telebot
 import pandas as pd
-
+import datetime
+from datetime import datetime, date, time
 
 def getSchedule():
     # try:
@@ -26,17 +25,29 @@ def getSchedule():
     for i in data['items']:
         # values = i.values()
         values = list(i.values())
+        name_personal = GetEmployeeName(values[2])
+        if name_personal == '':
+            Name_list.append(values[2])
+        else:
+            Name_list.append(name_personal)
 
-        Name_list.append(GetEmployeeName(values[2]))
+        if values[6] == 1:
+            day_off.append('Да')
+        else:
+            day_off.append('Нет')
+
+        date_time_obj_from = datetime.strptime(values[4], '%Y-%m-%d %H:%M:%S')
+        date_time_obj_to = datetime.strptime(values[5], '%Y-%m-%d %H:%M:%S')
+
         working_day_list.append(values[3])
-        date_from_list.append(values[4])
-        date_to_list.append(values[5])
-        day_off.append(values[6])
+        date_from_list.append(date_time_obj_from.time())
+        date_to_list.append(date_time_obj_to.time())
 
+
+        #datetime.time
 
 
         # print(values)
-
 
     df = pd.DataFrame({'Наименование': Name_list,
                        'Дата': working_day_list,
@@ -46,17 +57,16 @@ def getSchedule():
                        })
 
     #print(df)
-    writer = pd.ExcelWriter('pandas_simple.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('pandas_simple.xlsx', engine='xlsxwriter', datetime_format='mmm d yyyy hh:mm:ss')
     df.to_excel(writer, sheet_name='Sh')
     writer.save()
-    return
 
-
-    token = "908710316:AAFuUs_51f3ykh9gSrAUhq2w-xZpjm68-6A"
-    bot = telebot.TeleBot(token)
-    doc = open(writer, 'rb')
-    bot.send_document('555299761', doc)
-    doc.close()
+    ##Отправка документа в телеграм
+    # token = "908710316:AAFuUs_51f3ykh9gSrAUhq2w-xZpjm68-6A"
+    # bot = telebot.TeleBot(token)
+    # doc = open(writer, 'rb')
+    # bot.send_document('555299761', doc)
+    # doc.close()
 
 def send_message(text: str, chatid, doc =None, writer =None):
     token = "908710316:AAFuUs_51f3ykh9gSrAUhq2w-xZpjm68-6A"
@@ -68,8 +78,6 @@ def send_message(text: str, chatid, doc =None, writer =None):
         doc = open(writer, 'rb')
         bot.send_document(chatid, doc)
         doc.close()
-
-
 
 def GetEmployeeName(table_number):
     try:
@@ -86,19 +94,50 @@ def GetEmployeeName(table_number):
             result = data['data']['full_name']
             return result
         else:
-            print('Ошибка при получений данных по сотруднику в запросе', data, response.status_code, table_number)
+            print('Personal was not found', data, response.status_code, table_number)
 
     except:
-        print('Ошибка при получений данных по сотруднику', data, response.status_code, table_number)
-
+        print("Сотрудник не найден", data, response.status_code, table_number)
         return result
-
 
 
 # print(alaries1)
 
 getSchedule()
+
+# a = date(2015, 3, 19)
+# b = time(2, 10, 43)
+# c = datetime.combine(a, b)
+#
+# print(datetime.time(c))
+
 #result = GetEmployeeName('EUA-515065')
 
 
 # send_message("Тест из другого модуля", "555299761")
+values = '2022-02-01 09:00:00'
+#values = '2018-06-29 08:15:27'
+values2 = '2022-02-01'
+# print(values.reverse())
+#deadline = datetime.strptime("00:02:02", "%H:%M.%S")
+
+
+# date_time_str = '2018-06-29 08:15:27'
+# date_time_obj = datetime.strptime(values, '%Y-%m-%d %H:%M:%S')
+#
+# print(date_time_obj.time())
+# '2017-04-05-00.11.20'
+# today = date.today()
+# print(today.year)
+# print(today.month)
+# print(today.day)
+# print(today)
+
+
+#print(today)
+#print(today.strftime("%m/%d/%Y"))  # '04/05/2017'
+
+#print(today.strftime("%Y-%m-%d-%H.%M.%S"))  # 2017-04-05-00.18.00
+
+#deadline = datetime.strptime("%Y-%m-%d-%H.%M", values)
+#print(type(deadline), deadline)
