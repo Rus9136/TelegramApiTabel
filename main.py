@@ -2,7 +2,7 @@ import requests
 import telebot
 import pandas as pd
 import datetime
-from datetime import datetime, date, time
+from datetime import datetime, date, timedelta
 
 def getSchedule():
     # try:
@@ -103,26 +103,26 @@ def GetEmployeeName(table_number):
         print("Сотрудник не найден", data, response.status_code, table_number)
         return result
 
+def getIdNumber():
+    result = {'52': '-697703530',
+            '122': '-697703530',
+            '142': '-697703530',
+            '38': '-691703530'}
+    return result.items()
 
+def sending():
+    if date.today().isoweekday() == 1:
+        date_from = date.today()
+        date_to = date_from - timedelta(days=7)
+        items = getIdNumber()
 
-
-#if date.today().isoweekday() == 1:
-#    getSchedule()
-
+        for i in items:
+            number = i[0]
+            id = i[1]
+            #getSchedule(date_from, date_to, number, id)
 
 #getSchedule()
 
-dict = {'52': '-697703530',
-        '122': '-697703530',
-        '142': '-697703530',
-        '38': '-691703530'}
-
-lis = [dict]
-
-for i in dict.items():
-    number = i[0]
-    id = i[1]
-    print(id)
 
 
 
