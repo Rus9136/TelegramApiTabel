@@ -112,6 +112,19 @@ def GetEmployeeName(table_number):
 
 #getSchedule()
 
+dict = {'52': '-697703530',
+        '122': '-697703530',
+        '142': '-697703530',
+        '38': '-691703530'}
+
+lis = [dict]
+
+for i in dict.items():
+    number = i[0]
+    id = i[1]
+    print(id)
+
+
 
 # a = date(2015, 3, 19)
 # b = time(2, 10, 43)
