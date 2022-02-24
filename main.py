@@ -6,9 +6,12 @@ from datetime import datetime, date, time
 
 def getSchedule():
     # try:
+    date_from = '2022-01-01'
+    date_to = '2022-01-03'
+    number = str(110)
     response = requests.get(
-        'https://kdp.aqnietgroup.com/v1/workplaces/205',
-        params={'date_from': '2022-02-01', 'date_to': '2022-02-02'},
+        'https://kdp.aqnietgroup.com/v1/workplaces/' + number,
+        params={'date_from': date_from, 'date_to': date_to},
         headers={'Authorization': 'Bearer hOnIRtv-QpC84Ri0aZVRbukoxI3Z7iDr'},
     )
 
@@ -58,7 +61,7 @@ def getSchedule():
 
     #print(df)
     writer = pd.ExcelWriter('pandas_simple.xlsx', engine='xlsxwriter', datetime_format='mmm d yyyy hh:mm:ss')
-    df.to_excel(writer, sheet_name='Sh')
+    df.to_excel(writer, sheet_name='ГрафикРаботы')
     writer.save()
 
     ##Отправка документа в телеграм
@@ -101,9 +104,14 @@ def GetEmployeeName(table_number):
         return result
 
 
-# print(alaries1)
 
-getSchedule()
+
+#if date.today().isoweekday() == 1:
+#    getSchedule()
+
+
+#getSchedule()
+
 
 # a = date(2015, 3, 19)
 # b = time(2, 10, 43)
@@ -115,9 +123,9 @@ getSchedule()
 
 
 # send_message("Тест из другого модуля", "555299761")
-values = '2022-02-01 09:00:00'
+#values = '2022-02-01 09:00:00'
 #values = '2018-06-29 08:15:27'
-values2 = '2022-02-01'
+#values2 = '2022-02-01'
 # print(values.reverse())
 #deadline = datetime.strptime("00:02:02", "%H:%M.%S")
 
