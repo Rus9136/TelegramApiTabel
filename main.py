@@ -1,7 +1,6 @@
 import requests
 import telebot
 import pandas as pd
-import datetime
 from datetime import datetime, date, timedelta
 
 def getSchedule():
@@ -59,17 +58,21 @@ def getSchedule():
                        'Выходной': day_off
                        })
 
-    #print(df)
-    writer = pd.ExcelWriter('pandas_simple.xlsx', engine='xlsxwriter', datetime_format='mmm d yyyy hh:mm:ss')
+    cell_format = df.add_format({'bold': True, 'font_color': 'red'})
+    cell_format.set_font_color('green')
+    #worksheet.write('B1', 'Cell B1', cell_format)
+   # df.style.apply(highlight, col2highlite="Выходной", axis=None)
+
+    writer = pd.ExcelWriter('ГрафикРаботы.xlsx', engine='xlsxwriter', datetime_format='mmm d yyyy hh:mm:ss')
     df.to_excel(writer, sheet_name='ГрафикРаботы')
+
     writer.save()
 
-    ##Отправка документа в телеграм
-    # token = "908710316:AAFuUs_51f3ykh9gSrAUhq2w-xZpjm68-6A"
-    # bot = telebot.TeleBot(token)
-    # doc = open(writer, 'rb')
-    # bot.send_document('555299761', doc)
-    # doc.close()
+
+def highlight(df, col2highlite="Выходной"):
+    ret = pd.DataFrame("", index=df.index, columns=df.columns)
+    ret.loc[True, 'Выходной'] = "background-color: green"
+    return ret
 
 def send_message(text: str, chatid, doc =None, writer =None):
     token = "908710316:AAFuUs_51f3ykh9gSrAUhq2w-xZpjm68-6A"
@@ -121,7 +124,8 @@ def sending():
             id = i[1]
             #getSchedule(date_from, date_to, number, id)
 
-#getSchedule()
+
+getSchedule()
 
 
 
