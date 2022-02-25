@@ -2,22 +2,22 @@ import requests
 import telebot
 import pandas as pd
 from datetime import datetime, date, timedelta
+import os
+import numpy as np
 
-def getSchedule():
+def getSchedule(date_from, date_to, pharmacy, chatid):
     # try:
-    date_from = '2022-01-01'
-    date_to = '2022-01-03'
-    number = str(110)
     response = requests.get(
-        'https://kdp.aqnietgroup.com/v1/workplaces/' + number,
+        'https://kdp.aqnietgroup.com/v1/workplaces/' + pharmacy,
         params={'date_from': date_from, 'date_to': date_to},
         headers={'Authorization': 'Bearer hOnIRtv-QpC84Ri0aZVRbukoxI3Z7iDr'},
     )
+    print(date_from)
+    print(date_to)
+    print(pharmacy)
+    print(chatid)
 
     data = response.json()
-    dict_sample = {}
-    # dict_keys(['id', 'pharmacy', 'personal_number', 'working_day', 'date_from', 'date_to', 'day_off'])
-
     Name_list = []
     working_day_list = []
     date_from_list = []
@@ -46,44 +46,28 @@ def getSchedule():
         date_to_list.append(date_time_obj_to.time())
 
 
-        #datetime.time
+    df = pd.DataFrame({'Наименование': Name_list, 'Дата': working_day_list, 'ВремяС': date_from_list, 'ВремяПо': date_to_list, 'Выходной': day_off })
 
-
-        # print(values)
-
-    df = pd.DataFrame({'Наименование': Name_list,
-                       'Дата': working_day_list,
-                       'ВремяС': date_from_list,
-                       'ВремяПо': date_to_list,
-                       'Выходной': day_off
-                       })
-
-    cell_format = df.add_format({'bold': True, 'font_color': 'red'})
-    cell_format.set_font_color('green')
-    #worksheet.write('B1', 'Cell B1', cell_format)
-   # df.style.apply(highlight, col2highlite="Выходной", axis=None)
-
-    writer = pd.ExcelWriter('ГрафикРаботы.xlsx', engine='xlsxwriter', datetime_format='mmm d yyyy hh:mm:ss')
-    df.to_excel(writer, sheet_name='ГрафикРаботы')
+    writer = pd.ExcelWriter('График работы.xlsx', engine='xlsxwriter', datetime_format='mmm d yyyy hh:mm:ss')
+    df.to_excel(writer, sheet_name='График')
 
     writer.save()
+    send_telegram('', chatid, writer)
 
 
-def highlight(df, col2highlite="Выходной"):
-    ret = pd.DataFrame("", index=df.index, columns=df.columns)
-    ret.loc[True, 'Выходной'] = "background-color: green"
-    return ret
 
-def send_message(text: str, chatid, doc =None, writer =None):
+
+def send_telegram(text: str, chatid: str, writer=None):
     token = "908710316:AAFuUs_51f3ykh9gSrAUhq2w-xZpjm68-6A"
     bot = telebot.TeleBot(token)
 
-    if doc is None:
+    if writer is None:
         bot.send_message(chatid, text)
     else:
         doc = open(writer, 'rb')
         bot.send_document(chatid, doc)
         doc.close()
+        print('success true')
 
 def GetEmployeeName(table_number):
     try:
@@ -107,28 +91,63 @@ def GetEmployeeName(table_number):
         return result
 
 def getIdNumber():
-    result = {'52': '-697703530',
-            '122': '-697703530',
-            '142': '-697703530',
+    result = {'42': '555299761',
+            '7': '-697703530',
+            '10': '-787351019',
+            '108': '-662054159',
+            '110': '-603086419',
             '38': '-691703530'}
+
+    df = pd.read_excel('Группы.xlsx')
+
+    for row in df.itertuples(index=False):
+        print(row[4])
+        break
+
+
     return result.items()
 
+
 def sending():
-    if date.today().isoweekday() == 1:
+    if date.today().isoweekday() == 5:
         date_from = date.today()
-        date_to = date_from - timedelta(days=7)
+        date_to = date_from - timedelta(days=25)
         items = getIdNumber()
 
         for i in items:
-            number = i[0]
-            id = i[1]
-            #getSchedule(date_from, date_to, number, id)
+            pharmacy = i[0]
+            chatid = i[1]
+            getSchedule(str(date_to), str(date_from), pharmacy, chatid)
+            path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'График работы.xlsx')
+            os.remove(path)
+            break
 
 
-getSchedule()
+#getSchedule('555299761')
 
 
 
+#sending()
+#cols = [4]
+#usecols=cols
+
+df = pd.read_excel('Группы.xlsx')
+for row in df.itertuples(index=False):
+    result = {}
+
+
+    if not np.isnan(row[3]) and not np.isnan(row[4]):
+
+        pharmacy = round(row[3])
+        id_number = round(row[4])
+        result[str(pharmacy)] = str(id_number)
+    print(result)
+
+
+
+
+
+#print(excel_data_df)
 
 # a = date(2015, 3, 19)
 # b = time(2, 10, 43)
