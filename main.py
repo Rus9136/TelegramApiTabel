@@ -109,39 +109,45 @@ def getIdNumber():
 
 
 def sending():
-    if date.today().isoweekday() == 5:
-        date_from = date.today()
-        date_to = date_from - timedelta(days=25)
-        items = getIdNumber()
+    df = pd.read_excel('Группы.xlsx')
+    for row in df.itertuples(index=False):
+        result = {}
 
-        for i in items:
-            pharmacy = i[0]
-            chatid = i[1]
-            getSchedule(str(date_to), str(date_from), pharmacy, chatid)
-            path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'График работы.xlsx')
-            os.remove(path)
-            break
+        if not np.isnan(row[3]) and not np.isnan(row[4]):
+            pharmacy = round(row[3])
+            chatid = round(row[4])
+
+
+            if date.today().isoweekday() == 5:
+                date_from = date.today()
+                date_to = date_from - timedelta(days=28)
+                getSchedule(str(date_to), str(date_from), str(pharmacy), str(chatid))
+                path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'График работы.xlsx')
+                os.remove(path)
+
+    # if date.today().isoweekday() == 5:
+    #     date_from = date.today()
+    #     date_to = date_from - timedelta(days=28)
+    #     items = getIdNumber()
+    #
+    #     for i in items:
+    #         pharmacy = i[0]
+    #         chatid = i[1]
+    #         getSchedule(str(date_to), str(date_from), pharmacy, chatid)
+    #         path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'График работы.xlsx')
+    #         os.remove(path)
+    #         break
 
 
 #getSchedule('555299761')
 
 
 
-#sending()
+sending()
 #cols = [4]
 #usecols=cols
 
-df = pd.read_excel('Группы.xlsx')
-for row in df.itertuples(index=False):
-    result = {}
 
-
-    if not np.isnan(row[3]) and not np.isnan(row[4]):
-
-        pharmacy = round(row[3])
-        id_number = round(row[4])
-        result[str(pharmacy)] = str(id_number)
-    print(result)
 
 
 
