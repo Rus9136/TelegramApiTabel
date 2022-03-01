@@ -12,10 +12,7 @@ def getSchedule(date_from, date_to, pharmacy, chatid):
         params={'date_from': date_from, 'date_to': date_to},
         headers={'Authorization': 'Bearer hOnIRtv-QpC84Ri0aZVRbukoxI3Z7iDr'},
     )
-    print(date_from)
-    print(date_to)
-    print(pharmacy)
-    print(chatid)
+
 
     data = response.json()
     Name_list = []
@@ -23,6 +20,16 @@ def getSchedule(date_from, date_to, pharmacy, chatid):
     date_from_list = []
     date_to_list = []
     day_off = []
+
+
+    if response.status_code != 200:
+        print(response.status_code)
+        print(data)
+        print(date_from)
+        print(date_to)
+        print(pharmacy)
+        print(chatid)
+        return
 
     for i in data['items']:
         # values = i.values()
@@ -87,7 +94,7 @@ def GetEmployeeName(table_number):
             print('Personal was not found', data, response.status_code, table_number)
 
     except:
-        print("Сотрудник не найден", data, response.status_code, table_number)
+        #print("Сотрудник не найден", data, response.status_code, table_number)
         return result
 
 def getIdNumber():
@@ -111,19 +118,24 @@ def getIdNumber():
 def sending():
     df = pd.read_excel('Группы.xlsx')
     for row in df.itertuples(index=False):
-        result = {}
 
         if not np.isnan(row[3]) and not np.isnan(row[4]):
-            pharmacy = round(row[3])
-            chatid = round(row[4])
+            chatid = round(row[3])
+            pharmacy = round(row[4])
+            #chatid = 555299761 мой id  в телеграмм
 
 
-            if date.today().isoweekday() == 5:
+
+
+            if date.today().isoweekday() == 2:
                 date_from = date.today()
-                date_to = date_from - timedelta(days=28)
-                getSchedule(str(date_to), str(date_from), str(pharmacy), str(chatid))
+                date_to = date_from - timedelta(days=27)
+                getSchedule(str(date_to), str(date_from), str(252), str(-638074373))
                 path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'График работы.xlsx')
                 os.remove(path)
+                print(pharmacy)
+                break
+
 
     # if date.today().isoweekday() == 5:
     #     date_from = date.today()
@@ -144,6 +156,11 @@ def sending():
 
 
 sending()
+
+
+#send_telegram('hi','-638074373')
+
+
 #cols = [4]
 #usecols=cols
 
